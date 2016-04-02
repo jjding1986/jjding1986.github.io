@@ -4,9 +4,9 @@
   <subtitle>上善若水</subtitle>
   <link href="/atom.xml" rel="self"/>
   
-  <link href="http://jjding1986.github.io/"/>
+  <link href="https://jjding1986.github.io/"/>
   <updated>2016-04-02T11:49:10.000Z</updated>
-  <id>http://jjding1986.github.io/</id>
+  <id>https://jjding1986.github.io/</id>
   
   <author>
     <name>Jerry Ding</name>
@@ -17,8 +17,8 @@
   
   <entry>
     <title>Android热修复技术</title>
-    <link href="http://jjding1986.github.io/2016/03/31/android_hot_fix/"/>
-    <id>http://jjding1986.github.io/2016/03/31/android_hot_fix/</id>
+    <link href="https://jjding1986.github.io/2016/03/31/android_hot_fix/"/>
+    <id>https://jjding1986.github.io/2016/03/31/android_hot_fix/</id>
     <published>2016-03-31T07:18:07.000Z</published>
     <updated>2016-04-02T11:49:10.000Z</updated>
     
@@ -95,7 +95,7 @@
     </summary>
     
     
-      <category term="Android" scheme="http://jjding1986.github.io/tags/Android/"/>
+      <category term="Android" scheme="https://jjding1986.github.io/tags/Android/"/>
     
   </entry>
   
