@@ -167,8 +167,8 @@
     <article id="post-android_hot_fix" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2016/04/02/android_hot_fix/" class="article-date">
-  	<time datetime="2016-04-02T09:00:30.000Z" itemprop="datePublished">2016-04-02</time>
+      <a href="/2016/03/31/android_hot_fix/" class="article-date">
+  	<time datetime="2016-03-31T07:18:07.000Z" itemprop="datePublished">2016-03-31</time>
 </a>
     </div>
   
@@ -181,7 +181,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2016/04/02/android_hot_fix/">Android热修复技术</a>
+      <a class="article-title" href="/2016/03/31/android_hot_fix/">Android热修复技术</a>
     </h1>
   
 
@@ -191,161 +191,10 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>热修复技术可以让应用在不重新发布的情况之下进行一定程度的更新，对于修复紧急的线上bug非常有用。</p>
-<p>##可选方案##<br>目前Github上主流的开源项目有以下3个</p>
-<p>###淘宝Dexposed###<br>项目地址:<a href="https://github.com/alibaba/dexposed" target="_blank" rel="external">https://github.com/alibaba/dexposed</a></p>
-<p>###支付宝AndFix###<br>项目地址:<a href="https://github.com/alibaba/AndFix" target="_blank" rel="external">https://github.com/alibaba/AndFix</a></p>
-<p>###女娲###<br>项目地址:<a href="https://github.com/jasonross/Nuwa" target="_blank" rel="external">https://github.com/jasonross/Nuwa</a></p>
-<p>##方案筛选##<br>Dexposed目前对ART支持不好，第一个排除掉。</p>
-<p>AndFix采取了更底层的实现方式，涉及较多C++代码，深入学习成本较高，另外这套方案中最关键的差分包生成工具并没有开源，无疑也是一个隐患，所以也排除掉。</p>
-<p>女娲其实现分为Java和Groovy两部分，维护相对简单。对掌握Gradle插件编写有很大的帮助，这点对后续改造官方的dex分包方案很重要。</p>
-<p>综合考虑下来女娲是最优方案。</p>
-<p>##基本原理##<br>QQ空间团队的<a href="http://mp.weixin.qq.com/s?__biz=MzI1MTA1MzM2Nw==&amp;mid=400118620&amp;idx=1&amp;sn=b4fdd5055731290eef12ad0d17f39d4a&amp;scene=0#wechat_redirect" target="_blank" rel="external">这篇文章</a>应该是国内最早公开介绍热修复技术原理的了，具体的细节可以直接阅读这篇文章，下面介绍一些要点。</p>
-<p>首先，Google有个dex分包方案，支持把多个dex文件塞入到app的classloader之中，classloader加载类时会遍历这多个dex的队列。</p>
-<p>官方方案中，不同的dex中是没有重复类的，如果不同的dex中有重复的类class，classloader在遍历dex队列时会加载第一个被找到的class，其它dex中的class不再被加载。</p>
-<p>所以将想要修复的的类打成dex，并且插入到classloader dex加载队列的最前，应该就能替换这些类，从而达到修复的目的。</p>
-<p>Google对apk安装过程做了一些性能方面的优化，将dex转化为odex。在这个过程中会对一些类做处理，如果一个class直接引用到的所有其它类都和当前class在同一个dex中，class就会被打上CLASS_ISPREVERIFIED的标志，不能再从其它的dex中引用类了，也就无法用插入新dex的方式热替换class直接引用的类了。</p>
-<p>总结一下这里的要点就是：  </p>
-<ol>
-<li>防止类被打上CLASS_ISPREVERIFIED的标志  </li>
-<li>将包含补丁class文件的dex插入到应用运行时ClassLoader的dexElements加载序列最前面<br>##整体流程##<br>女娲，下文称为nuwa，就是以QQ空间的这篇介绍为基础，使用Gradle将大量工作变成了自动化方式完成。</li>
-</ol>
-<p>其整体流程可分为3个部分，分别是:  </p>
-<ol>
-<li>class文件的处理  </li>
-<li>补丁包的生成  </li>
-<li>补丁包的加载<br>###class文件的处理###<br>对class文件的处理就是为了防止类被打上CLASS_ISPREVERIFIED的标志，这个步骤在客户端正常打包和生成补丁包两个过程中都会进行。</li>
-</ol>
-<p>前面说过，要想类能被插入新dex的方式替换，就要阻止直接引用它的类被打上CLASS_ISPREVERIFIED标记。为此，nuwa提供了一个Gradle插件(下文称为nuwa_plugin)。</p>
-<p>nuwa_plugin在客户端的编译期，所有class文件生成之后，使用<a href="http://asm.ow2.org/" target="_blank" rel="external">asm</a>修改了所有可能需要被替换类的class文件，向它们的构造方法中注入了一段代码，引用了一个空实现的类(下文称之为Hack.class)，Hack.class会单独存在一个dex中，这样就避免了引用Hack.class的类被打上CLASS_ISPREVERIFIED的标志，而这些类中所引用的其它类就可以从其它dex中被替换了。 </p>
-<p>注意这里不是所有类都能被nuwa这套方案所替换的，具体是哪些类，会在下文的加载流程中说明。</p>
-<p>这里需要将一个包含Hack.class未签名Hack.apk放在应用编译时nuwa_plugin方便找到的路径下。nuwa_plugin在应用编译时将Hack.apk拷贝至应用的assets文件夹下，并使用当前客户端打包的key对其进行签名，使用相同的key签名是因为补丁加载时会校验签名，而Hack.apk本质也是一个补丁。</p>
-<p>###补丁包的生成<br>补丁包的生成也是在应用编译打包时由nuwa_plugin来完成，原理就是比对前后两次同名class文件的hash值，将两次不一致的class提取出来打包成apk，并用与应用打包时相同的key签名。</p>
-<p>所以这一步需要将待修复应用编译生成的class映射文件保存下来，在生成补丁时将映射文件的路径传入nuwa_plugin。</p>
-<p>###补丁包的加载###<br>补丁包的加载可分为以下几个部分  </p>
-<p><strong>1. 加载Hack.class</strong><br>前面class的处理中提到，nuwa会往所有可能被替换类的class文件中插入一段对Hack.class引用的代码，所以在这些被修改的类加载之前，必须先加载Hack.class，而包含Hack.class的apk已经在编译期被nuwa_plugin放入了应用的assets文件夹。</p>
-<p>nuwa首先从assets中将Hack.apk拷贝至应用的私有存储中，也就是设备的/data/data目录下，这个操作只会在应用第一次启动时进行，然后将其中包含Hack.class的dex插入到ClassLoader加载序列的最前列。</p>
-<p>在上面的步骤完成前就加载的类，在被nuwa_plugin编译处理时是不能被注入对Hack.class引用的，因为它们加载时，Hack.class还不存在于ClassLoader的加载路径中，一旦注入了对Hack.class引用，加载后就会因为找不到Hack.class而异常，所以它们是不能被nuwa替换的。  </p>
-<p>所以这个步骤越早进行越好。一般选择在Application或者其子类的attachBaseContext方法中进行，这同时也说明了Application或者其子类是无法被热修复的。  </p>
-<p><strong>2. 加载补丁包</strong><br>这个过程与Hack.class的加载大致相同，区别就是补丁包位于sd卡上，不需要拷贝的操作。  </p>
-<p>关于上述两个过程详细的源码分析，可以参考<a href="http://blog.csdn.net/sbsujjbcy/article/details/50812674" target="_blank" rel="external">这篇文章</a>。</p>
-<p>##我们的扩展##<br>nuwa只是提供了一个基本的方案，如果要集成到实际的应用当中，还需要做一些其它的工作。  </p>
-<p>###补丁包的下载###<br>这块是整个集成中花费时间较多的，整个nuwa方案的核心是补丁的加载，但是在实际应用中下载也是同等重要的，需要客户端通过pull或者push的触发方式去下载补丁包。</p>
-<p>首先简单介绍目前app的一些背景:<br>1.app中有些内容是动态的，由服务器端控制这些变化，对应这些动态的内容，在服务器端有一个json格式的配置文件。<br>2.app启动时在loading界面会去服务器读取配置文件的md5，判定配置是否发生了变化，如果有变化就会去请求配<br>置文件的内容  </p>
-<p>不同的app在补丁下载这里的逻辑都会因各自业务逻辑的不同而不同，核心是找到合适的触发点，将下载逻辑挂载在这些触发点上，下面仅结合笔者团队app现有逻辑给出一种解决方案供参考：<br>1.首先是服务器端，在应用主配置文件中加入一个新的字段hotFixMD5。</p>
-<p>2.触发下载补丁的点有两处，一是应用的主配置文件发生了变化，客户端会去检测hotFixMD5这个字段；二是主配置文件没有变化，应用会去检测是否有下载失败的补丁。</p>
-<p>3.当上述的触发点触发，客户端会判定是否需要请求补丁配置文件，如果需要下载，会保存hotFixMD5至SharedPreferences供下次触发补丁下载逻辑时判断用。</p>
-<p>4.成功请求到补丁配置文件后，会在其中查找合适当前设备和应用版本的补丁信息，如果有匹配的，并且其它前置条件(如sd卡正常加载)满足，就会读取匹配项中的md5和downloadUrl，进行下载。</p>
-<p>5.下载成功后，会将补丁包的md5保存至SharedPreferences中，供补丁包加载时校验。</p>
-<p>6.若下载失败，会保存失败状态，供下次应用启动时检测。</p>
-<p>###补丁包的加载###<br>补丁包的加载同样需要在原有的基础上做一些改进，这里主要考虑的是安全性。</p>
-<p>nuwa现有方案中对补丁包的签名做了校验，这样可以防止替换补丁包去加载一些恶意代码。</p>
-<p>除此之外，客户端会不定期的更新，如果加载了之前版本的补丁，由于代码的变更，极有可能引起客户端的crash，为了防止这种情况出现，在加载补丁时增加了md5的校验。</p>
-<p>md5校验核心的流程如下：<br>1.前面提到过，补丁下载成功时，保存补丁的md5至SharedPreferences，key中包含客户端版本信息。<br>2.补丁加载时，以包含当前版本信息的key去SharedPreferences取补丁的md5，与设备上的补丁包md5做比对，如果相同才加载。</p>
-<p>###补丁包的下架###<br>如果一个补丁包因为某些原因需要下架，这个时候只需要在服务器端将应用配置文件中的hotFixMD5值置为空，当触发下载逻辑时，发现hotFixMD5的值由非空变为空，就会主动删除已经下载的补丁包。</p>
-<p>###开发环境隔离###<br>在集成nuwa的开发过程中，避免不了对整个流程的测试，常常造成其它同事调试中的客户端加载了测试用的补丁包引发crash，影响他们的开发。<br>为此，主要通过两点来避免：<br>1.在单独的服务器地址配置补丁包。</p>
-<p>2.添加加载补丁的开关，默认开启，其它功能的开发者可关闭补丁加载功能。</p>
-<p>##实际使用##</p>
-<p>###nuwa的使用###<br><strong>1.在直接依赖nuwa的module的build.gradle中</strong><br>这里是在module_nuwa的build.gradle中</p>
-<pre><code>dependencies {
-    ....
-    compile parent.ext.libNuwa
-    ....
-}
-</code></pre><p>其中parent.ext.libNuwa在工程的总build.gradle定义，这里nuwa是被发布在私有maven仓库中，所以还要加入私有maven仓库的配置</p>
-<pre><code>buildscript {
-    repositories {
-        maven {
-            url &apos;http://host/nexus/content/groups/public/&apos;
-        }
-        ....
-    }
-}
-
-allprojects {
-    repositories {
-        maven {
-            url &apos;http://host/nexus/content/groups/public/&apos;
-        }
-    }
-    ....
-    ext {
-        ....
-        libNuwa = &apos;com.eastmoney.nuwa:lib_nuwa:1.0.27&apos;
-        ....
-    }
-    ....
-}
-</code></pre><p><strong>2.在应用的入口类</strong><br>也就是Application或者其子类，这里是在EmApplication类中</p>
-<pre><code>@Override
-protected void attachBaseContext(Context base) {
-    super.attachBaseContext(base);
-    ....
-    //init nuwa
-    Nuwa.initial(this);
-    //load hotpatch if exist
-    Nuwa.loadPatch(this, HotPatchUtils.getHotPatchDir(this), true);
-    ....
-}    
-</code></pre><p><strong>3.在需要触发下载逻辑的地方</strong><br>这里是在AppConfigManager类的saveAndUpdateCurrentConfig方法中，因为每次应用的配置发生变化后都会调用它</p>
-<pre><code>public void saveAndUpdateCurrentConfig(String currentConfig) {
-    ....
-    HotPatchManager manager = new HotPatchManager(ContextUtil.getContext());
-    // currentConfig is the json String that contains &apos;hotFixMD5&apos;
-    manager.checkHotPatch(currentConfig);
-    ....
-｝
-</code></pre><p><strong>4.在需要检测是否有补丁下载失败的地方</strong><br>这里是在AppConfigDownloadListener类的completed方法中，每次应用的配置无变化都会触发这里的逻辑</p>
-<pre><code>@Override
-public void completed(ResponseInterface resp) {
-    ....
-    HotPatchManager manager = new HotPatchManager(ContextUtil.getContext());
-    manager.resumeFailedIfExist();
-    ....
-}
-</code></pre><p>###nuwa_plugin的使用###<br><strong>1.在应用工程的总build.gradle中</strong><br>这里是将nuwaplugin发布到了私有maven库中，当前版本为1.0.14</p>
-<pre><code>buildscript {
-    ....
-    dependencies {
-        ....
-        classpath &apos;com.eastmoney.nuwaplugin:lib_nuwaplugin:1.0.14&apos;
-        ....
-    }
-    ....
-}
-</code></pre><p><strong>2.在app的build.gradle中</strong></p>
-<pre><code>apply plugin: &apos;lib_nuwaplugin&apos;
-nuwa {
-    debugOn = true
-    sdkModuleName = &apos;module_nuwa&apos;
-    unsignedHackApkPath = &apos;/module_nuwa/hack/hack.apk&apos;
-    excludeClass = [&apos;com.eastmoney.android.berlin.EMApplication&apos;]
-}
-</code></pre><p>debugOn表示打包debug的apk时是否开启nuwa</p>
-<p>unsignedHackApkPath表示上文提到的未签名的hack.apk的存放路径</p>
-<p>sdkModuleName表示签名后的hack.apk存放在哪个module的assets下 </p>
-<p>excludeClass表示不要在编译时使用asm注入Hack.class引用的类  </p>
-<p><strong>3.生成补丁包</strong><br>编译需要打补丁的应用代码后，从<em>/应用根目录/app/build/outputs/</em>路径下拷贝出nuwa文件夹，这里假定拷贝至<em>/Users/nuwa</em></p>
-<p>修复应用的缺陷之后，执行<em>gradle :app:assembleRelease -P NuwaDir=/Users/nuwa</em>，这里如果将assembleRelease替换为assembleDebug就是打出针对debug包的补丁</p>
-<p>如果编译正常，会在<em>/应用根目录/app/build/outputs/nuwa/渠道名/release/patch/</em>下生成补丁包</p>
-<p>###服务器端的配置###<br><strong>1.上传补丁包</strong><br>将补丁包<em>patch.apk</em>上传至服务器，生成下载地址<em>downloadUrl</em>和文件<em>md5</em></p>
-<p><strong>2.生成补丁配置文件</strong><br>这里会生成一个json文件，对应一个数组，数组对应的JavaBean如下:</p>
-<pre><code>public class HotPatch {
-    //客户端版本
-    private String appVersion;
-    //手机品牌
-    private String brand;
-    //第三方ROM会设置这个值
-    private String display;
-    //设备Android版本
-    private String sdkVersion;
-    //补丁包MD5
-    private String md5;
-    //补丁包下载地址
-    private String downloadUrl;
-    ....
-}
-</code></pre><p>客户端在触发请求补丁配置文件的逻辑时，服务器就会返回代表多个HotPatch对象的json。客户端根据运行环境的appVersion、brand、display、sdkVersion这几个维度从中获取匹配的HotPatch对象，最后根据md5和downloadUr完成补丁包的下载。</p>
-
+<h2 id="可选方案"><a href="#可选方案" class="headerlink" title="可选方案"></a>可选方案</h2><p>目前Github上主流的开源项目有以下3个</p>
+<h3 id="淘宝Dexposed"><a href="#淘宝Dexposed" class="headerlink" title="- 淘宝Dexposed"></a>- 淘宝Dexposed</h3><p>项目地址:<a href="https://github.com/alibaba/dexposed">https://github.com/alibaba/dexposed</a></p>
+<h3 id="支付宝AndFix"><a href="#支付宝AndFix" class="headerlink" title="- 支付宝AndFix"></a>- 支付宝AndFix</h3><p>项目地址:<a href="https://github.com/alibaba/AndFix">https://github.com/alibaba/AndFix</a></p>
+<h3 id="女娲"><a href="#女娲" class="headerlink" title="- 女娲"></a>- 女娲</h3><p>项目地址:<a href="https://github.com/jasonross/Nuwa">https://github.com/jasonross/Nuwa</a><br>
       
     </div>
     
@@ -358,6 +207,10 @@ nuwa {
 
       
 
+      
+        <p class="article-more-link">
+          <a  href="/2016/03/31/android_hot_fix/#more">more >></a>
+        </p>
       
       <div class="clearfix"></div>
     </div>
