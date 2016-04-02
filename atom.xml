@@ -5,44 +5,24 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2016-04-02T09:02:39.000Z</updated>
+  <updated>2016-04-02T10:19:40.000Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
-    <name>丁津津</name>
+    <name>Jerry Ding</name>
     <email>jjding1986@gmail.com</email>
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>new post</title>
-    <link href="http://yoursite.com/2016/04/02/new-post/"/>
-    <id>http://yoursite.com/2016/04/02/new-post/</id>
-    <published>2016-04-02T09:02:30.000Z</published>
-    <updated>2016-04-02T09:02:39.000Z</updated>
-    
-    <content type="html">&lt;p&gt;Test&lt;/p&gt;
-</content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;Test&lt;/p&gt;
-
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
     <title>Android热修复技术</title>
-    <link href="http://yoursite.com/2016/04/02/hello-world/"/>
-    <id>http://yoursite.com/2016/04/02/hello-world/</id>
+    <link href="http://yoursite.com/2016/04/02/android_hot_fix/"/>
+    <id>http://yoursite.com/2016/04/02/android_hot_fix/</id>
     <published>2016-04-02T09:00:30.000Z</published>
-    <updated>2016-04-02T09:02:11.000Z</updated>
+    <updated>2016-04-02T10:19:40.000Z</updated>
     
-    <content type="html">&lt;p&gt;#Android热修复技术#&lt;br&gt;热修复技术可以让应用在不重新发布的情况之下进行一定程度的更新，对于修复紧急的线上bug非常有用。&lt;/p&gt;
+    <content type="html">&lt;p&gt;热修复技术可以让应用在不重新发布的情况之下进行一定程度的更新，对于修复紧急的线上bug非常有用。&lt;/p&gt;
 &lt;p&gt;##可选方案##&lt;br&gt;目前Github上主流的开源项目有以下3个&lt;/p&gt;
 &lt;p&gt;###淘宝Dexposed###&lt;br&gt;项目地址:&lt;a href=&quot;https://github.com/alibaba/dexposed&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://github.com/alibaba/dexposed&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;###支付宝AndFix###&lt;br&gt;项目地址:&lt;a href=&quot;https://github.com/alibaba/AndFix&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://github.com/alibaba/AndFix&lt;/a&gt;&lt;/p&gt;
@@ -201,12 +181,14 @@ nuwa {
     
     <summary type="html">
     
-      &lt;p&gt;#Android热修复技术#&lt;br&gt;热修复技术可以让应用在不重新发布的情况之下进行一定程度的更新，对于修复紧急的线上bug非常有用。&lt;/p&gt;
+      &lt;p&gt;热修复技术可以让应用在不重新发布的情况之下进行一定程度的更新，对于修复紧急的线上bug非常有用。&lt;/p&gt;
 &lt;p&gt;##可选方案##&lt;br&gt;目前Github上主流的开源项目有以下3个&lt;/p&gt;
-&lt;p&gt;###淘宝Dexposed###&lt;br&gt;项目
+&lt;p&gt;###淘宝Dexposed###&lt;br&gt;项目地址:&lt;a href=&quot;https:
     
     </summary>
     
+    
+      <category term="Android" scheme="http://yoursite.com/tags/Android/"/>
     
   </entry>
   
