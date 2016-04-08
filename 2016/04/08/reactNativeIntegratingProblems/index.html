@@ -6,22 +6,16 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <title>集成React Native至现有Android应用问题总结 | Jerry Ding&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="1.加入React Native的dependency之后报：Attribute “color” has already been defined原因：React Native引入的support-v7中资源与自定义控件属性冲突。目前我们项目中有冲突的地方是Base模块下attrs.xml文件中定义的ColorSquare。 
-解决办法：修改自定义控件属性的name  
-参考：stackoverf">
+  <meta name="description" content="公司准备在已有Android客户端中部分使用React Native，于是我踏上了踩坑之旅。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="集成React Native至现有Android应用问题总结">
 <meta property="og:url" content="https://jjding1986.github.io/2016/04/08/reactNativeIntegratingProblems/index.html">
 <meta property="og:site_name" content="Jerry Ding's Blog">
-<meta property="og:description" content="1.加入React Native的dependency之后报：Attribute “color” has already been defined原因：React Native引入的support-v7中资源与自定义控件属性冲突。目前我们项目中有冲突的地方是Base模块下attrs.xml文件中定义的ColorSquare。 
-解决办法：修改自定义控件属性的name  
-参考：stackoverf">
-<meta property="og:updated_time" content="2016-04-08T05:54:16.000Z">
+<meta property="og:description" content="公司准备在已有Android客户端中部分使用React Native，于是我踏上了踩坑之旅。">
+<meta property="og:updated_time" content="2016-04-08T06:04:54.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="集成React Native至现有Android应用问题总结">
-<meta name="twitter:description" content="1.加入React Native的dependency之后报：Attribute “color” has already been defined原因：React Native引入的support-v7中资源与自定义控件属性冲突。目前我们项目中有冲突的地方是Base模块下attrs.xml文件中定义的ColorSquare。 
-解决办法：修改自定义控件属性的name  
-参考：stackoverf">
+<meta name="twitter:description" content="公司准备在已有Android客户端中部分使用React Native，于是我踏上了踩坑之旅。">
   
     <link rel="alternative" href="/atom.xml" title="Jerry Ding&#39;s Blog" type="application/atom+xml">
   
@@ -107,7 +101,7 @@
 				
 				<section class="switch-part switch-part2">
 					<div class="widget tagcloud" id="js-tagcloud">
-						<a href="/tags/Android/" style="font-size: 10px;">Android</a> <a href="/tags/React-Native/" style="font-size: 10px;">React Native</a>
+						<a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/React-Native/" style="font-size: 10px;">React Native</a>
 					</div>
 				</section>
 				
@@ -202,7 +196,8 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="1-加入React-Native的dependency之后报：Attribute-“color”-has-already-been-defined"><a href="#1-加入React-Native的dependency之后报：Attribute-“color”-has-already-been-defined" class="headerlink" title="1.加入React Native的dependency之后报：Attribute “color” has already been defined"></a>1.加入React Native的dependency之后报：Attribute “color” has already been defined</h2><p>原因：React Native引入的support-v7中资源与自定义控件属性冲突。目前我们项目中有冲突的地方是Base模块下attrs.xml文件中定义的ColorSquare。 </p>
+        <p>公司准备在已有Android客户端中部分使用React Native，于是我踏上了踩坑之旅。<br><a id="more"></a></p>
+<h2 id="1-加入React-Native的dependency之后报：Attribute-“color”-has-already-been-defined"><a href="#1-加入React-Native的dependency之后报：Attribute-“color”-has-already-been-defined" class="headerlink" title="1.加入React Native的dependency之后报：Attribute “color” has already been defined"></a>1.加入React Native的dependency之后报：Attribute “color” has already been defined</h2><p>原因：React Native引入的support-v7中资源与自定义控件属性冲突。目前我们项目中有冲突的地方是Base模块下attrs.xml文件中定义的ColorSquare。 </p>
 <p>解决办法：修改自定义控件属性的name  </p>
 <p>参考：<a href="http://stackoverflow.com/questions/33551324/android-migration-to-appcompat-v7-causes-error-attribute-color-has-already-be" target="_blank" rel="external">stackoverflow</a></p>
 <h2 id="2-应用启动时报找不到一些so库"><a href="#2-应用启动时报找不到一些so库" class="headerlink" title="2.应用启动时报找不到一些so库"></a>2.应用启动时报找不到一些so库</h2><h2 id="3-跳转至React-Native界面报：java-lang-UnsatisfiedLinkError-could-find-DSO-to-load-libreactnativejni-so"><a href="#3-跳转至React-Native界面报：java-lang-UnsatisfiedLinkError-could-find-DSO-to-load-libreactnativejni-so" class="headerlink" title="3.跳转至React Native界面报：java.lang.UnsatisfiedLinkError: could find DSO to load: libreactnativejni.so"></a>3.跳转至React Native界面报：java.lang.UnsatisfiedLinkError: could find DSO to load: libreactnativejni.so</h2><p>关于这个问题的一些描述：<a href="https://github.com/facebook/react-native/issues/2814" target="_blank" rel="external">github上的</a>，以及其它人的一些<a href="https://corbt.com/posts/2015/09/18/mixing-32-and-64bit-dependencies-in-android.html" target="_blank" rel="external">尝试</a>。</p>
@@ -241,6 +236,16 @@
   </div>
   
     
+<nav id="article-nav">
+  
+  
+    <a href="/2016/03/31/androidHotFix/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Android热修复技术</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
   
 </article>
 

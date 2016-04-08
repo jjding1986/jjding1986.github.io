@@ -100,7 +100,7 @@
 				
 				<section class="switch-part switch-part2">
 					<div class="widget tagcloud" id="js-tagcloud">
-						<a href="/tags/Android/" style="font-size: 10px;">Android</a> <a href="/tags/React-Native/" style="font-size: 10px;">React Native</a>
+						<a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/React-Native/" style="font-size: 10px;">React Native</a>
 					</div>
 				</section>
 				
@@ -186,39 +186,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="1-加入React-Native的dependency之后报：Attribute-“color”-has-already-been-defined"><a href="#1-加入React-Native的dependency之后报：Attribute-“color”-has-already-been-defined" class="headerlink" title="1.加入React Native的dependency之后报：Attribute “color” has already been defined"></a>1.加入React Native的dependency之后报：Attribute “color” has already been defined</h2><p>原因：React Native引入的support-v7中资源与自定义控件属性冲突。目前我们项目中有冲突的地方是Base模块下attrs.xml文件中定义的ColorSquare。 </p>
-<p>解决办法：修改自定义控件属性的name  </p>
-<p>参考：<a href="http://stackoverflow.com/questions/33551324/android-migration-to-appcompat-v7-causes-error-attribute-color-has-already-be" target="_blank" rel="external">stackoverflow</a></p>
-<h2 id="2-应用启动时报找不到一些so库"><a href="#2-应用启动时报找不到一些so库" class="headerlink" title="2.应用启动时报找不到一些so库"></a>2.应用启动时报找不到一些so库</h2><h2 id="3-跳转至React-Native界面报：java-lang-UnsatisfiedLinkError-could-find-DSO-to-load-libreactnativejni-so"><a href="#3-跳转至React-Native界面报：java-lang-UnsatisfiedLinkError-could-find-DSO-to-load-libreactnativejni-so" class="headerlink" title="3.跳转至React Native界面报：java.lang.UnsatisfiedLinkError: could find DSO to load: libreactnativejni.so"></a>3.跳转至React Native界面报：java.lang.UnsatisfiedLinkError: could find DSO to load: libreactnativejni.so</h2><p>关于这个问题的一些描述：<a href="https://github.com/facebook/react-native/issues/2814" target="_blank" rel="external">github上的</a>，以及其它人的一些<a href="https://corbt.com/posts/2015/09/18/mixing-32-and-64bit-dependencies-in-android.html" target="_blank" rel="external">尝试</a>。</p>
-<p>就目前资料看，这个问题不是所有应用都会遇到，这里结合手头上应用来分析。</p>
-<p>分析：在引入React Native的dependency之前，打出的apk的lib目录下只会有armeabi一个文件夹。引入之后，会多出来arm64-v8a,armeabi-v7a,x86,x86_64四个文件夹，其中只有armeabi-v7a和x86下包含libreactnativejni.so。  </p>
-<p>目前测试的设备都是armeabi-v7a的，在查找so时会优先去armeabi-v7a找，按Google的说法，如果一个so在armeabi-v7a中找不到会去armeabi中查找，但是实际情况并没有这样。引入React Native之后，系统在armeabi-v7a中找不到我们自己的一些so，且又并没有去armeabi下去查找，就造成错误2。  </p>
-<p>为解决错误2这里尝试在app中build.gradle文件中加入</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">android &#123;</span><br><span class="line">    ....</span><br><span class="line">    defaultConfig &#123;</span><br><span class="line">        ....</span><br><span class="line">        ndk &#123;</span><br><span class="line">            abiFilters &quot;armeabi&quot;</span><br><span class="line">        &#125;</span><br><span class="line">        ....</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>加入以上配置后，另外需要在项目的gradle.properties文件中加入</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">android.useDeprecatedNdk=true</span><br></pre></td></tr></table></figure>
-<p>当配置好上述两项之后，应用可以启动了，但是会出现3中的错误，这是因为这时候打出的apk中的lib目录下只有armeabi文件夹，而libreactnativejni.so并不在其中。  </p>
-<p>通过尝试其它几种配置后发现，ibreactnativejni.so只会出现在armeabi-v7a,x86下，而我们自己的so目前只会出现在armeabi中，而一旦apk中出现了armeabi-v7a，就不会去armeabi中查找so了。</p>
-<p>解决方法：将应用源码所有引入so文件的module中，都在src/jniLibs/下新建armeabi-v7a，然后将已有armeabi下的so文件都拷贝一份到armeabi-v7a下。这样暂时解决了问题，但是会使得apk体积变大，需要后续的优化。</p>
-<h2 id="4-跳转至包含React-Native的界面后报：Android-java-lang-IllegalAccessError-Method-void-android-support-v4-net-ConnectivityManagerCompat"><a href="#4-跳转至包含React-Native的界面后报：Android-java-lang-IllegalAccessError-Method-void-android-support-v4-net-ConnectivityManagerCompat" class="headerlink" title="4.跳转至包含React Native的界面后报：Android java.lang.IllegalAccessError Method void android.support.v4.net.ConnectivityManagerCompat"></a>4.跳转至包含React Native的界面后报：Android java.lang.IllegalAccessError Method void android.support.v4.net.ConnectivityManagerCompat</h2><p>github上关于这个问题的<a href="https://github.com/facebook/react-native/issues/6152" target="_blank" rel="external">讨论</a>。</p>
-<p>原因：support-v4版本冲突引起  </p>
-<p>解决办法：对于我们的工程，在应用主build.gradle中加入</p>
-<pre><code>subprojects {
-    configurations.all {
-        resolutionStrategy {
-            // https://github.com/facebook/react-native/issues/6152
-            force &apos;com.android.support:support-v4:23.0.1&apos;
-        }
-    }
-}
-</code></pre><p>问题暂时得到解决，但是并不完美，后面会继续寻找更好的方法，上面github链接中facebook的工作人员也给出了方案，待尝试。</p>
-<h2 id="5-跳转至包含React-Native的界面后报：Can’t-find-variable-fbBatchedBridge"><a href="#5-跳转至包含React-Native的界面后报：Can’t-find-variable-fbBatchedBridge" class="headerlink" title="5.跳转至包含React Native的界面后报：Can’t find variable: __fbBatchedBridge"></a>5.跳转至包含React Native的界面后报：Can’t find variable: __fbBatchedBridge</h2><p>分析：造成这个异常的原因不止一种，通常的原因是开发环境没有按照<a href="https://facebook.github.io/react-native/docs/running-on-device-ios.html#content" target="_blank" rel="external">官方的文档</a>来设置，解决办法见<a href="https://github.com/facebook/react-native/issues/4881" target="_blank" rel="external">这里</a>。  </p>
-<p>这里还要说下遇到的另一种情况，具体分析和解决办法见<a href="http://blog.5ibc.net/p/48976.html" target="_blank" rel="external">这里</a>。</p>
-<h2 id="6-跳转至包含React-Native的界面后报：Attached-Dialog-Module-to-host-with-pending-alert-but-no-FragmentManager"><a href="#6-跳转至包含React-Native的界面后报：Attached-Dialog-Module-to-host-with-pending-alert-but-no-FragmentManager" class="headerlink" title="6.跳转至包含React Native的界面后报：Attached Dialog Module to host with pending alert but no FragmentManager"></a>6.跳转至包含React Native的界面后报：Attached Dialog Module to host with pending alert but no FragmentManager</h2><p>分析：没有处理好ReactInstanceManager的生命周期，注意无论是实用Activity还是Fragment都要严格参考<a href="https://facebook.github.io/react-native/docs/embedded-app-android.html#content" target="_blank" rel="external">官方的文档</a>。  </p>
-<p>解决办法：见<a href="http://stackoverflow.com/questions/35254232/react-native-maps-integration-issue-with-react-native-0-19-0" target="_blank" rel="external">这里</a>。</p>
-<p>目前仅集成就遇到这些问题，相信随着更深入的使用，会遇到更多问题，后面会再汇总一次。  </p>
-<p>顺便说句facebook在github上的支持比较及时，这点国内一些以kpi为导向的公司做的不是很好，经常开源出来就扔那不管了。</p>
-
+        <p>公司准备在已有Android客户端中部分使用React Native，于是我踏上了踩坑之旅。<br>
       
     </div>
     
@@ -231,6 +199,74 @@
 
       
 
+      
+        <p class="article-more-link">
+          <a  href="/2016/04/08/reactNativeIntegratingProblems/#more">more >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-androidHotFix" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/03/31/androidHotFix/" class="article-date">
+  	<time datetime="2016-03-31T07:18:07.000Z" itemprop="datePublished">2016-03-31</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/03/31/androidHotFix/">Android热修复技术</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>热修复技术可以让应用在不重新发布的情况之下进行一定程度的更新，对于修复紧急的线上bug非常有用。</p>
+<h2 id="可选方案"><a href="#可选方案" class="headerlink" title="可选方案"></a>可选方案</h2><p>目前Github上主流的开源项目有以下3个</p>
+<h3 id="淘宝Dexposed"><a href="#淘宝Dexposed" class="headerlink" title="- 淘宝Dexposed"></a>- 淘宝Dexposed</h3><p>项目地址:<a href="https://github.com/alibaba/dexposed">https://github.com/alibaba/dexposed</a></p>
+<h3 id="支付宝AndFix"><a href="#支付宝AndFix" class="headerlink" title="- 支付宝AndFix"></a>- 支付宝AndFix</h3><p>项目地址:<a href="https://github.com/alibaba/AndFix">https://github.com/alibaba/AndFix</a></p>
+<h3 id="女娲"><a href="#女娲" class="headerlink" title="- 女娲"></a>- 女娲</h3><p>项目地址:<a href="https://github.com/jasonross/Nuwa">https://github.com/jasonross/Nuwa</a><br>
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li></ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a  href="/2016/03/31/androidHotFix/#more">more >></a>
+        </p>
       
       <div class="clearfix"></div>
     </div>
