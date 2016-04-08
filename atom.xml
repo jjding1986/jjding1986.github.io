@@ -75,7 +75,7 @@
     <link href="https://jjding1986.github.io/2016/03/31/androidHotFix/"/>
     <id>https://jjding1986.github.io/2016/03/31/androidHotFix/</id>
     <published>2016-03-31T07:18:07.000Z</published>
-    <updated>2016-04-08T06:02:38.000Z</updated>
+    <updated>2016-04-08T06:06:00.000Z</updated>
     
     <content type="html">&lt;p&gt;热修复技术可以让应用在不重新发布的情况之下进行一定程度的更新，对于修复紧急的线上bug非常有用。&lt;/p&gt;
 &lt;h2 id=&quot;可选方案&quot;&gt;&lt;a href=&quot;#可选方案&quot; class=&quot;headerlink&quot; title=&quot;可选方案&quot;&gt;&lt;/a&gt;可选方案&lt;/h2&gt;&lt;p&gt;目前Github上主流的开源项目有以下3个&lt;/p&gt;
@@ -151,6 +151,8 @@
     
     
       <category term="Android" scheme="https://jjding1986.github.io/tags/Android/"/>
+    
+      <category term="HotFix" scheme="https://jjding1986.github.io/tags/HotFix/"/>
     
   </entry>
   
