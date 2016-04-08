@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jjding1986.github.io/"/>
-  <updated>2016-04-08T06:04:54.000Z</updated>
+  <updated>2016-04-08T06:17:09.000Z</updated>
   <id>https://jjding1986.github.io/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="https://jjding1986.github.io/2016/04/08/reactNativeIntegratingProblems/"/>
     <id>https://jjding1986.github.io/2016/04/08/reactNativeIntegratingProblems/</id>
     <published>2016-04-08T05:47:46.000Z</published>
-    <updated>2016-04-08T06:04:54.000Z</updated>
+    <updated>2016-04-08T06:17:09.000Z</updated>
     
     <content type="html">&lt;p&gt;公司准备在已有Android客户端中部分使用React Native，于是我踏上了踩坑之旅。&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h2 id=&quot;1-加入React-Native的dependency之后报：Attribute-“color”-has-already-been-defined&quot;&gt;&lt;a href=&quot;#1-加入React-Native的dependency之后报：Attribute-“color”-has-already-been-defined&quot; class=&quot;headerlink&quot; title=&quot;1.加入React Native的dependency之后报：Attribute “color” has already been defined&quot;&gt;&lt;/a&gt;1.加入React Native的dependency之后报：Attribute “color” has already been defined&lt;/h2&gt;&lt;p&gt;原因：React Native引入的support-v7中资源与自定义控件属性冲突。目前我们项目中有冲突的地方是Base模块下attrs.xml文件中定义的ColorSquare。 &lt;/p&gt;
@@ -51,7 +51,7 @@
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;问题暂时得到解决，但是并不完美，后面会继续寻找更好的方法，上面github链接中facebook的工作人员也给出了方案，待尝试。&lt;/p&gt;
 &lt;h2 id=&quot;5-跳转至包含React-Native的界面后报：Can’t-find-variable-fbBatchedBridge&quot;&gt;&lt;a href=&quot;#5-跳转至包含React-Native的界面后报：Can’t-find-variable-fbBatchedBridge&quot; class=&quot;headerlink&quot; title=&quot;5.跳转至包含React Native的界面后报：Can’t find variable: __fbBatchedBridge&quot;&gt;&lt;/a&gt;5.跳转至包含React Native的界面后报：Can’t find variable: __fbBatchedBridge&lt;/h2&gt;&lt;p&gt;分析：造成这个异常的原因不止一种，通常的原因是开发环境没有按照&lt;a href=&quot;https://facebook.github.io/react-native/docs/running-on-device-ios.html#content&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;官方的文档&lt;/a&gt;来设置，解决办法见&lt;a href=&quot;https://github.com/facebook/react-native/issues/4881&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;这里&lt;/a&gt;。  &lt;/p&gt;
 &lt;p&gt;这里还要说下遇到的另一种情况，具体分析和解决办法见&lt;a href=&quot;http://blog.5ibc.net/p/48976.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;这里&lt;/a&gt;。&lt;/p&gt;
-&lt;h2 id=&quot;6-跳转至包含React-Native的界面后报：Attached-Dialog-Module-to-host-with-pending-alert-but-no-FragmentManager&quot;&gt;&lt;a href=&quot;#6-跳转至包含React-Native的界面后报：Attached-Dialog-Module-to-host-with-pending-alert-but-no-FragmentManager&quot; class=&quot;headerlink&quot; title=&quot;6.跳转至包含React Native的界面后报：Attached Dialog Module to host with pending alert but no FragmentManager&quot;&gt;&lt;/a&gt;6.跳转至包含React Native的界面后报：Attached Dialog Module to host with pending alert but no FragmentManager&lt;/h2&gt;&lt;p&gt;分析：没有处理好ReactInstanceManager的生命周期，注意无论是实用Activity还是Fragment都要严格参考&lt;a href=&quot;https://facebook.github.io/react-native/docs/embedded-app-android.html#content&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;官方的文档&lt;/a&gt;。  &lt;/p&gt;
+&lt;h2 id=&quot;6-跳转至包含React-Native的界面后报：Attached-Dialog-Module-to-host-with-pending-alert-but-no-FragmentManager&quot;&gt;&lt;a href=&quot;#6-跳转至包含React-Native的界面后报：Attached-Dialog-Module-to-host-with-pending-alert-but-no-FragmentManager&quot; class=&quot;headerlink&quot; title=&quot;6.跳转至包含React Native的界面后报：Attached Dialog Module to host with pending alert but no FragmentManager&quot;&gt;&lt;/a&gt;6.跳转至包含React Native的界面后报：Attached Dialog Module to host with pending alert but no FragmentManager&lt;/h2&gt;&lt;p&gt;分析：没有处理好ReactInstanceManager的生命周期，注意无论是用Activity还是Fragment都要严格参考&lt;a href=&quot;https://facebook.github.io/react-native/docs/embedded-app-android.html#content&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;官方的文档&lt;/a&gt;。  &lt;/p&gt;
 &lt;p&gt;解决办法：见&lt;a href=&quot;http://stackoverflow.com/questions/35254232/react-native-maps-integration-issue-with-react-native-0-19-0&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;这里&lt;/a&gt;。&lt;/p&gt;
 &lt;p&gt;目前仅集成就遇到这些问题，相信随着更深入的使用，会遇到更多问题，后面会再汇总一次。  &lt;/p&gt;
 &lt;p&gt;顺便说句facebook在github上的支持比较及时，这点国内一些以kpi为导向的公司做的不是很好，经常开源出来就扔那不管了。&lt;/p&gt;
